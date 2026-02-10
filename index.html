@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CGH Technik Planer</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <header>
+      <h1>CGH Technik Planer</h1>
+      <p>Planung für Technik-Einsätze an Sonntagen</p>
+    </header>
+
+    <main>
+      <section class="card" id="supabase-config">
+        <h2>Supabase Verbindung</h2>
+        <p class="muted">
+          Diese Werte werden lokal gespeichert und bei jedem Laden automatisch verwendet.
+        </p>
+        <div class="grid two">
+          <label>
+            Supabase URL
+            <input id="supabase-url" type="url" placeholder="https://xyz.supabase.co" />
+          </label>
+          <label>
+            Supabase Anon Key
+            <input id="supabase-key" type="password" placeholder="eyJ..." />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="save-supabase" class="primary">Verbindung speichern</button>
+          <button id="clear-supabase" class="danger ghost">Zurücksetzen</button>
+        </div>
+      </section>
+
+      <section class="card" id="auth-card">
+        <h2>Anmeldung & Registrierung</h2>
+        <div class="grid two">
+          <label>
+            E-Mail
+            <input id="auth-email" type="email" autocomplete="email" />
+          </label>
+          <label>
+            Passwort
+            <input id="auth-password" type="password" autocomplete="current-password" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="login-btn" class="primary">Login</button>
+          <button id="register-btn" class="ghost">Techniker registrieren</button>
+          <button id="logout-btn" class="danger ghost hidden">Logout</button>
+        </div>
+        <p id="user-info" class="muted"></p>
+      </section>
+
+      <nav class="tabs hidden" id="app-tabs">
+        <button data-tab="admin" class="tab-btn active">Admin-Bereich</button>
+        <button data-tab="tech" class="tab-btn">Techniker-Bereich</button>
+      </nav>
+
+      <section id="admin" class="tab-content">
+        <div class="card">
+          <h2>Admin Dashboard</h2>
+          <div class="kpi-grid">
+            <article><strong id="kpi-techs">0</strong><span>Techniker</span></article>
+            <article><strong id="kpi-sundays">0</strong><span>Sonntage</span></article>
+            <article><strong id="kpi-assigned">0</strong><span>Zuweisungen</span></article>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Plan erstellen</h3>
+          <div class="grid three">
+            <label>
+              Startdatum (Sonntag)
+              <input id="plan-start" type="date" />
+            </label>
+            <label>
+              Anzahl Sonntage
+              <input id="plan-count" type="number" min="1" max="52" value="12" />
+            </label>
+            <label>
+              Uhrzeitblock
+              <input id="plan-time" type="text" value="10:00-11:30" />
+            </label>
+          </div>
+          <div class="actions">
+            <button id="create-plan" class="primary">Neuen Plan erstellen</button>
+            <button id="publish-plan" class="success">Plan freigeben</button>
+            <button id="delete-plan" class="danger">Plan löschen</button>
+          </div>
+          <p class="muted">Planstatus: <strong id="plan-status">Kein Plan</strong></p>
+        </div>
+
+        <div class="card">
+          <h3>Techniker verwalten</h3>
+          <div class="grid four">
+            <label>Name <input id="new-tech-name" type="text" /></label>
+            <label>E-Mail <input id="new-tech-email" type="email" /></label>
+            <label>Spezialisierung
+              <select id="new-tech-spec">
+                <option>Ton</option>
+                <option>Video</option>
+                <option>Licht</option>
+                <option>Netzwerk</option>
+                <option>Kombi</option>
+              </select>
+            </label>
+            <label>Rolle
+              <select id="new-tech-role">
+                <option>technician</option>
+                <option>admin</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button id="add-tech" class="primary">Techniker hinzufügen</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>E-Mail</th><th>Spezialisierung</th><th>Rolle</th><th>Aktion</th>
+                </tr>
+              </thead>
+              <tbody id="tech-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Verfügbarkeiten & Zuweisungen</h3>
+          <div class="actions">
+            <button id="auto-assign" class="primary">Auto-Zuweisung ausführen</button>
+          </div>
+          <div id="admin-schedule"></div>
+        </div>
+      </section>
+
+      <section id="tech" class="tab-content hidden">
+        <div class="card">
+          <h2>Meine Verfügbarkeit</h2>
+          <div id="my-availability"></div>
+        </div>
+
+        <div class="card">
+          <h2>Meine Termine</h2>
+          <div class="actions">
+            <button id="export-ics" class="primary">ICS Export</button>
+            <button id="export-csv" class="ghost">CSV Export</button>
+          </div>
+          <div id="my-assignments"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
